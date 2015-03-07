@@ -1,5 +1,5 @@
 # watchdeps
-Watch dependencies of your NodeJS projects.
+Watch dependencies of your NodeJS projects on GitHub.
 
 ## Usage
 
