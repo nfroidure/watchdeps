@@ -1,0 +1,35 @@
+{
+  "name": "watchdeps",
+  "version": "0.0.0",
+  "description": "Watch dependencies of your NodeJS projects on GitHub automagically.",
+  "main": "src/watchdeps.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:nfroidure/watchdeps"
+  },
+  "keywords": [
+    "watch",
+    "dependencies",
+    "github"
+  ],
+  "author": "Nicolas Froidure",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nfroidure/watchdeps/issues"
+  },
+  "homepage": "https://github.com/nfroidure/watchdeps",
+  "dependencies": {
+    "bluebird": "^2.9.13",
+    "commander": "^2.6.0",
+    "glob": "^5.0.0",
+    "prompt": "^0.2.14",
+    "request": "^2.53.0"
+  },
+  "bin" : {
+    "watchdeps" : "./bin/watchdeps.js"
+  },
+  "preferGlobal": true
+}
