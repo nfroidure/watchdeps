@@ -17,7 +17,7 @@ watchdeps -u nfroidure
 ```
 
 Get every available options by running:
-```js
+```sh
 watchdeps -h
 
 #  Usage: watchdeps [options]
