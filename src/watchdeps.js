@@ -2,6 +2,7 @@ var request = require('request');
 var fs = require('fs');
 var glob = require("glob");
 var Promise = require('bluebird');
+var YError = require('yerror');
 
 function watchdeps(options, callback) {
 
@@ -48,6 +49,7 @@ function processDependency(dependency, options) {
     .then(function(content) {
       var contents = JSON.parse(content);
       var matches;
+      var url;
       if(!(
         contents.repository &&
         contents.repository.type &&
@@ -74,12 +76,14 @@ function processDependency(dependency, options) {
           ' is not a GitHub repository (' + contents.repository.url + ').');
         return 0;
       }
+      url = 'https://api.github.com/repos/' + matches[1] + '/' + matches[2] +
+            '/subscription';
       options.verbose && console.log(contents.name +
-        ': sending watch request.');
+        ': sending watch request (' + url + ').');
+
       return (new Promise(function(resolve, reject) {
         request[options.unwatch ? 'del' : 'put']({
-          url: 'https://api.github.com/repos/' + matches[1] + '/' + matches[2] +
-            '/subscription',
+          url: url,
           body: {
             subscribed: true
           },
@@ -93,13 +97,13 @@ function processDependency(dependency, options) {
             (options.unwatch && 204 !== response.statusCode)) {
             options.verbose && console.log(contents.name +
               ' couldn\'t update subscription (' + response.statusCode + ').');
-            if(401) {
-              return reject(new Error('E_BAD_CREDENTIALS'));
+            if(401 === response.statusCode) {
+              return reject(new YError('E_BAD_CREDENTIALS', options.username));
             }
-            if(403) {
-              return reject(new Error('E_UNAUTHORIZED'));
+            if(403 === response.statusCode) {
+              return reject(new YError('E_UNAUTHORIZED', options.username));
             }
-            return reject(new Error('E_UNEXPECTED_RESPONSE'));
+            return reject(new YError('E_UNEXPECTED_RESPONSE', response.statusCode, url));
           }
           options.verbose && console.log(contents.name +
             ': successfully ' + (options.unwatch ? 'un' : ' ') + 'watched.');

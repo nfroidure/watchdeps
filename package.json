@@ -26,7 +26,8 @@
     "commander": "^2.6.0",
     "glob": "^5.0.0",
     "prompt": "^0.2.14",
-    "request": "^2.53.0"
+    "request": "^2.53.0",
+    "yerror": "^1.0.0"
   },
   "bin": {
     "watchdeps": "./bin/watchdeps.js"
