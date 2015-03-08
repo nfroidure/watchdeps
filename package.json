@@ -1,6 +1,6 @@
 {
   "name": "watchdeps",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Watch dependencies of your NodeJS projects on GitHub automagically.",
   "main": "src/watchdeps.js",
   "scripts": {
