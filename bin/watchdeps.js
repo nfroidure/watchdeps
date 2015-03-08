@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 var program = require('commander');
 var fs = require('fs');
 var prompt = require('prompt');
@@ -33,8 +35,8 @@ if(!(program.token || program.password)) {
 }
 
 function runWatchdeps(program) {
-  watchdeps(program).then(function() {
-    console.log('Done!');
+  watchdeps(program).then(function(result) {
+    console.log('Done (' + result.processed + ' dependencies watched on ' + result.total + ').');
   }, function(err) {
     if(err) {
       console.log(program.verbose ? err.stack : err);

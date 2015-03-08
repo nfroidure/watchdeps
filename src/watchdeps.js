@@ -33,7 +33,14 @@ function getDependencies(pattern) {
 function processDependencies(dependencies, options) {
   return Promise.all(dependencies.map(function(dependency) {
     return processDependency(dependency, options);
-  }));
+  })).then(function(results) {
+    return {
+      processed: results.reduce(function(sum, n) {
+        return n + sum;
+      }, 0),
+      total: dependencies.length
+    };
+  });
 };
 
 function processDependency(dependency, options) {
@@ -47,12 +54,12 @@ function processDependency(dependency, options) {
         contents.repository.url
       )) {
         options.verbose && console.log(contents.name + ' has no repository field.');
-        return;
+        return 0;
       }
       if('git' !== contents.repository.type) {
         options.verbose && console.log(contents.name +
           ' is not a git repository (' + contents.repository.type + ').');
-        return;
+        return 0;
       }
       matches = contents.repository.url.match(
         /^(?:git@github.com:|https?:\/\/github.com\/|git:\/\/github.com\/)([^/]+)\/([^/]+)\.git/i
@@ -65,7 +72,7 @@ function processDependency(dependency, options) {
       if(!matches) {
         options.verbose && console.log(contents.name +
           ' is not a GitHub repository (' + contents.repository.url + ').');
-        return;
+        return 0;
       }
       options.verbose && console.log(contents.name +
         ': sending watch request.');
@@ -86,11 +93,17 @@ function processDependency(dependency, options) {
             (options.unwatch && 204 !== response.statusCode)) {
             options.verbose && console.log(contents.name +
               ' couldn\'t update subscription (' + response.statusCode + ').');
-            return reject(new Error('E_BAD_RESPONSE'));
+            if(401) {
+              return reject(new Error('E_BAD_CREDENTIALS'));
+            }
+            if(403) {
+              return reject(new Error('E_UNAUTHORIZED'));
+            }
+            return reject(new Error('E_UNEXPECTED_RESPONSE'));
           }
           options.verbose && console.log(contents.name +
             ': successfully ' + (options.unwatch ? 'un' : ' ') + 'watched.');
-          resolve();
+          resolve(1);
         });
       }));
     });
